@@ -1,5 +1,5 @@
-#ifndef POP_HPP
-#define POP_HPP
+#ifndef POP_H
+#define POP_H
 
 #include <libpmemobj.h>
 
@@ -31,4 +31,4 @@ void ph_close();
 // internal functions
 PMEMobjpool* get_pop();
 
-#endif
+#endif		// POP_H
