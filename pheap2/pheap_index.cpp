@@ -3,6 +3,28 @@
 
 #include "pop.h"
 
+// Singleton pointer
+PheapIndex* PheapIndex::singleton = 0;
+
+PheapIndex* PheapIndex::instance() {
+	PheapIndex* idx;
+	if (ph_isnew()) {
+		printf("Init'ing pheap...\n");
+		struct pheap* my_pheap = get_pheap();
+		printf("pheap_base=%p\n", my_pheap);
+		idx = new PheapIndex;
+		// since this is our first allocation, PheapIndex will be at the address of pheap->data
+		printf("PheapIndex=%p\n", my_pheap->data);
+	} else {
+		printf("Loading pheap\n");
+		struct pheap* my_pheap = get_pheap();
+		printf("pheap_base=%p\n", my_pheap);
+		idx = (PheapIndex*) my_pheap->data;
+		printf("PheapIndex=%p\n", my_pheap->data);
+	}
+	return idx;
+}
+
 void PheapIndex::add_klass(char* klass_id, Klass* klass) {
 	struct klass_index_node* node = (struct klass_index_node*) ph_malloc(sizeof(struct klass_index_node));
 	node->next_node = NULL;

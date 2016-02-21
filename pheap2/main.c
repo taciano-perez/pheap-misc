@@ -12,11 +12,9 @@ int main(int argc, char *argv[])
 	Klass* klass;
 	Klass* klass2;
 	Symbol* symbol;
+	
+	idx = PheapIndex::instance();
 	if (ph_isnew()) {
-		printf("Init'ing heap...\n");
-		struct pheap* my_pheap = get_pheap();
-		printf("pheap=%p\n", my_pheap);
-		idx = new PheapIndex;
 		klass = new Klass;
 		printf("klass=%p\n", klass);
 		klass2 = new Klass;
@@ -34,11 +32,6 @@ int main(int argc, char *argv[])
 		idx->add_klass(class_name, klass);
 		idx->add_klass(symbol_name, klass2);
 	} else {
-		printf("Getting PheapIndex* in a very dirty way...\n");
-		struct pheap* my_pheap = get_pheap();
-		printf("pheap=%p\n", my_pheap);
-		//klass = (Klass*) my_pheap->data;
-		idx = (PheapIndex*) my_pheap->data;
 		klass = idx->get_class((char*)"AB");
 		if (klass == NULL) printf("Klass not found!");
 		char* k_n = klass->get_class_name();

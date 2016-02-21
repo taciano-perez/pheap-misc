@@ -16,6 +16,7 @@ class PheapIndex {
 	private:
 	struct klass_index_node* klass_index_head;
 	struct klass_index_node* klass_index_tail;
+	static PheapIndex* singleton;
 
 	public:
 	void *operator new(size_t  num_bytes) {
@@ -29,6 +30,7 @@ class PheapIndex {
 
 	void add_klass(char* klass_id, Klass* klass);
 	Klass* get_class(char* id);
+	static PheapIndex* instance();
 
 };
 
