@@ -31,6 +31,10 @@ int main(int argc, char *argv[])
 		klass->set_symbol(symbol);
 		idx->add_klass(class_name, klass);
 		idx->add_klass(symbol_name, klass2);
+		// test heap limits
+		while (1) {
+			ph_malloc(1024);
+		}
 	} else {
 		klass = idx->get_class((char*)"AB");
 		if (klass == NULL) printf("Klass not found!");

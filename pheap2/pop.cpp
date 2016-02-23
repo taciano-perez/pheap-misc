@@ -17,7 +17,7 @@ PMEMobjpool *get_pop() {
 	if (!pop_initd) {
 		if (access(PATH, F_OK) != 0) {
 			// create persistent heap
-			int pool_size = sizeof(pheap);
+			int pool_size = HEAP_SIZE+HEAP_SIZE;
 			if (pool_size < PMEMOBJ_MIN_POOL) pool_size = PMEMOBJ_MIN_POOL;
 			if ((pop = pmemobj_create(PATH, POBJ_LAYOUT_NAME(pheap_layout), pool_size, 0666)) == NULL) {
 			
@@ -60,15 +60,23 @@ struct pheap* get_pheap() {
  * allocation function
  */
 void* ph_malloc(int len) {
+	printf("freespace=%d\n", pheap->freespace);
 	void* ret_addr;
-	TX_BEGIN(get_pop()) {
+	if (pheap->freespace < len) {
+		// prevent heap overrun
+		printf("error: pheap is out of space\n");
+		return NULL;
+	}
+	//TX_BEGIN(get_pop()) {
 		ret_addr = (void*)pheap->next_free;
+		//pmemobj_tx_add_range_direct(&pheap->next_free, sizeof(char*));
 		pheap->next_free += len;
-		pmemobj_tx_add_range_direct(pheap->next_free, sizeof(void*));
+		//pmemobj_tx_add_range_direct(&pheap->freespace, sizeof(int));
 		pheap->freespace -= len;
-		pmemobj_tx_add_range_direct(&pheap->freespace, sizeof(int));
-		TX_MEMSET((char*)ret_addr, 0, len);
-	} TX_END
+		//pmemobj_tx_add_range_direct(ret_addr, sizeof(len));
+		//TX_MEMSET((char*)ret_addr, 0, len);
+		memset((char*)ret_addr, 0, len);
+	//} TX_END
 	
 	return ret_addr;
 }
